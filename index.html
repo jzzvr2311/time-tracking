@@ -401,6 +401,10 @@
                     return;
                 }
                 
+                setShowTimeInConfirm(true);
+            };
+
+            const confirmTimeIn = () => {
                 const now = new Date();
                 setTimeInRecorded(now);
                 setTimeOutRecorded(null);
@@ -418,9 +422,18 @@
                 setRecords(updatedRecords);
                 saveData(updatedRecords, employeeName);
                 showNotif('Time In Recorded ✓');
+                setShowTimeInConfirm(false);
+            };
+
+            const cancelTimeIn = () => {
+                setShowTimeInConfirm(false);
             };
 
             const handleTimeOut = () => {
+                setShowTimeOutConfirm(true);
+            };
+
+            const confirmTimeOut = () => {
                 const now = new Date();
                 
                 const updatedRecords = [...records];
@@ -435,6 +448,11 @@
                 } else {
                     showNotif('Please log Time In first');
                 }
+                setShowTimeOutConfirm(false);
+            };
+
+            const cancelTimeOut = () => {
+                setShowTimeOutConfirm(false);
             };
 
             const handleEmployeeNameChange = (value) => {
