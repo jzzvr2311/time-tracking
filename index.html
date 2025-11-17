@@ -264,8 +264,27 @@
 
                 setIsSyncing(true);
                 try {
-                    // Create new gist if no gist ID
-                    if (!gistId) {
+                    // If user provided a Gist ID, use it
+                    if (gistId) {
+                        // Verify the gist exists
+                        const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+                            headers: {
+                                'Authorization': `token ${githubToken}`,
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Invalid Gist ID or token');
+                        }
+
+                        // Save settings
+                        localStorage.setItem('github-token', githubToken);
+                        localStorage.setItem('gist-id', gistId);
+                        setSyncEnabled(true);
+                        setShowSettings(false);
+                        showNotif('✓ Sync enabled with existing gist!');
+                    } else {
+                        // Create new gist
                         const data = {
                             records: records,
                             employeeName: employeeName,
@@ -294,17 +313,19 @@
                         }
 
                         const gist = await response.json();
-                        setGistId(gist.id);
-                        localStorage.setItem('gist-id', gist.id);
+                        const newGistId = gist.id;
+                        
+                        // Save settings
+                        setGistId(newGistId);
+                        localStorage.setItem('github-token', githubToken);
+                        localStorage.setItem('gist-id', newGistId);
+                        setSyncEnabled(true);
+                        setShowSettings(false);
+                        showNotif('✓ New gist created and sync enabled!');
                     }
-
-                    localStorage.setItem('github-token', githubToken);
-                    setSyncEnabled(true);
-                    setShowSettings(false);
-                    showNotif('Sync enabled! ✓');
                 } catch (error) {
                     console.error('Setup error:', error);
-                    showNotif('Setup failed - check token');
+                    showNotif('❌ Setup failed - check token/gist ID');
                 } finally {
                     setIsSyncing(false);
                 }
