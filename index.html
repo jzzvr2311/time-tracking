@@ -520,6 +520,10 @@
             });
 
             const exportToExcel = () => {
+                setShowExportConfirm(true);
+            };
+
+            const confirmExport = () => {
                 const dataToExport = filteredRecords.length > 0 ? filteredRecords : records;
                 let csv = 'DATE,DAY,NAME,TIME IN,TIME OUT\n';
                 dataToExport.forEach(record => {
@@ -537,6 +541,12 @@
                     link.click();
                     document.body.removeChild(link);
                 }
+                setShowExportConfirm(false);
+                showNotif('✓ Exported to Excel');
+            };
+
+            const cancelExport = () => {
+                setShowExportConfirm(false);
             };
 
             if (isLoading) {
@@ -552,6 +562,61 @@
                     {showNotification && (
                         <div className="fixed top-4 left-4 right-4 bg-green-500 text-white px-4 py-3 rounded-xl shadow-lg z-50 text-center font-medium">
                             {notificationMessage}
+                        </div>
+                    )}
+
+                    {showTimeInConfirm && (
+                        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+                            <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+                                <h3 className="text-xl font-bold text-gray-800 mb-3">Clock In Now?</h3>
+                                <p className="text-gray-600 mb-6">Record your time in at {formatTime(new Date())}?</p>
+                                <div className="flex gap-3">
+                                    <button onClick={cancelTimeIn} className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl transition-colors font-medium">
+                                        Cancel
+                                    </button>
+                                    <button onClick={confirmTimeIn} className="flex-1 px-4 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-colors font-medium">
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showTimeOutConfirm && (
+                        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+                            <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+                                <h3 className="text-xl font-bold text-gray-800 mb-3">Clock Out Now?</h3>
+                                <p className="text-gray-600 mb-6">Record your time out at {formatTime(new Date())}?</p>
+                                <div className="flex gap-3">
+                                    <button onClick={cancelTimeOut} className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl transition-colors font-medium">
+                                        Cancel
+                                    </button>
+                                    <button onClick={confirmTimeOut} className="flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-800 text-white rounded-xl transition-colors font-medium">
+                                        Confirm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {showExportConfirm && (
+                        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+                            <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+                                <h3 className="text-xl font-bold text-gray-800 mb-3">Export to Excel?</h3>
+                                <p className="text-gray-600 mb-6">
+                                    Export {filteredRecords.length > 0 && filteredRecords.length !== records.length 
+                                        ? `${filteredRecords.length} filtered records` 
+                                        : `${records.length} records`} to CSV file?
+                                </p>
+                                <div className="flex gap-3">
+                                    <button onClick={cancelExport} className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl transition-colors font-medium">
+                                        Cancel
+                                    </button>
+                                    <button onClick={confirmExport} className="flex-1 px-4 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-colors font-medium">
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     )}
 
